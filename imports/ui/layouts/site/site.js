@@ -4,22 +4,9 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 
 // material-ui
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import red from '@material-ui/core/colors/red';
-import pink from '@material-ui/core/colors/pink';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 
-const theme = createMuiTheme({
-  typography: {
-    // Tell Material-UI what's the font-size on the html element is.
-    htmlFontSize: 10,
-    useNextVariants: true,
-  },
-  palette: {
-    primary: pink,
-    accent: red,
-    type: 'light',
-  },
-});
+import theme from '/imports/ui/themes/default.js';
 
 // styled-components
 const StyledDemo = styled.div`
