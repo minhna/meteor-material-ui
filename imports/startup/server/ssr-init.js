@@ -6,6 +6,10 @@ import { Helmet } from 'react-helmet';
 import Loadable from 'react-loadable';
 import { ServerStyleSheet } from 'styled-components';
 
+// handle material-ui
+import { createGenerateClassName } from '@material-ui/core/styles';
+import { JssProvider, SheetsRegistry } from 'react-jss';
+
 onPageLoad(async (sink) => {
   // try to disable server render from some pages
   const { url } = sink.request;
@@ -14,13 +18,19 @@ onPageLoad(async (sink) => {
     return;
   }
 
-  const context = {};
+  // material-ui
+  // Create a sheetsRegistry instance.
+  const sheetsRegistry = new SheetsRegistry();
+  const generateClassName = createGenerateClassName();
 
+  const context = {};
   const routes = (await import('../both/routes.js')).default;
 
   const App = props => (
     <StaticRouter location={props.location} context={context}>
-      {routes}
+      <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
+        {routes}
+      </JssProvider>
     </StaticRouter>
   );
 
@@ -37,11 +47,16 @@ onPageLoad(async (sink) => {
   // we have a list of modules here, hopefully Meteor will allow to add them to bundle
   // console.log(modules);
 
+  // material-ui
+  const css = sheetsRegistry.toString();
+  // console.log('css', css);
+
   sink.renderIntoElementById('react-target', html);
 
   const helmet = Helmet.renderStatic();
   sink.appendToHead(helmet.meta.toString());
   sink.appendToHead(helmet.title.toString());
   sink.appendToHead(helmet.link.toString());
+  sink.appendToHead(`<style id="jss-server-side">${css}</style>`); // material-ui css attached
   sink.appendToHead(styleTags);
 });
